@@ -1,6 +1,5 @@
 import formidable from 'formidable'
-import {resolve, join} from 'path'
-
+import {join, resolve} from 'path'
 export const config = {
     api: {
         bodyParser: false
@@ -8,18 +7,20 @@ export const config = {
 }
 
 export default async function Upload(req, res) {
-    const options = {
+    const optinos = {
         uploadDir: join(resolve(), '/uploads'),
         keepExtensions: true,
-        filename: function (name, ext, part, form) {
+        maxFileSize: 10 * 1024 * 1024, // 10mb
+        maxFieldsSize: 10 * 1024* 1024, // 10mb
+        filename: function(name, ext, part, form) {
             return name + ext
         }
     }
-    console.log(options)
-    const form = new formidable.IncomingForm(options)
-
+    const form = new formidable.IncomingForm(optinos)
     form.parse(req, async function(err, fields, files) {
+        if(err) {
+            console.log(err)
+        }
         console.log(fields)
     })
-    return res.redirect('/')
 }
